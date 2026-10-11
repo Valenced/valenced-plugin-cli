@@ -118,6 +118,7 @@ interface Manifest {
 	name: string
 	description?: string
 	author?: string
+	contributors?: string[]
 	icon?: string
 	version: string
 	dependencies?: Record<string, { version?: string; optional?: boolean }>
@@ -133,6 +134,14 @@ function validateManifest(manifest: Manifest, source: string): void {
 	)
 		throw new Error(`${source}: invalid plugin id '${manifest.id}'`)
 	parseVersion(manifest.version)
+	if (
+		manifest.contributors !== undefined &&
+		!(
+			Array.isArray(manifest.contributors) &&
+			manifest.contributors.every(c => typeof c === 'string')
+		)
+	)
+		throw new Error(`${source}: contributors must be an array of strings`)
 	const deps = manifest.dependencies ?? {}
 	for (const reservedId of RESERVED_DEPENDENCY_IDS)
 		if (!(reservedId in deps))
@@ -246,6 +255,7 @@ interface IndexPlugin {
 	name: string
 	description: string
 	author: string
+	contributors?: string[]
 	icon?: string
 	channels: Record<string, string>
 	versions: Record<string, IndexVersion>
@@ -339,6 +349,9 @@ export function generateIndex(artifacts: Artifact[], config: RepoConfig = {}) {
 				name: manifest.name,
 				description: manifest.description ?? '',
 				author: manifest.author ?? '',
+				...(manifest.contributors?.length
+					? { contributors: manifest.contributors }
+					: {}),
 				...(manifest.icon ? { icon: manifest.icon } : {}),
 				channels: {},
 				versions: { [manifest.version]: entry },
@@ -381,6 +394,9 @@ export function generateIndex(artifacts: Artifact[], config: RepoConfig = {}) {
 			name: manifest.name,
 			description: manifest.description ?? '',
 			author: manifest.author ?? '',
+			...(manifest.contributors?.length
+				? { contributors: manifest.contributors }
+				: {}),
 			...(manifest.icon ? { icon: manifest.icon } : {}),
 			channels,
 			versions: plugin.versions,
