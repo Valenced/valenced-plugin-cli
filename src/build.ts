@@ -2,14 +2,11 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { parseArgs } from 'node:util'
-import hiddenImportMap from '@revenge-mod/types/modules.hidden.importmap.json' with {
-	type: 'json',
+import hiddenImportMap from '@revenge-mod/types/modules.hidden.importmap.json' with { type: 'json'
 }
-import hiddenModules from '@revenge-mod/types/modules.hidden.json' with {
-	type: 'json',
+import hiddenModules from '@revenge-mod/types/modules.hidden.json' with { type: 'json'
 }
-import publicImportMap from '@revenge-mod/types/modules.importmap.json' with {
-	type: 'json',
+import publicImportMap from '@revenge-mod/types/modules.importmap.json' with { type: 'json'
 }
 import modules from '@revenge-mod/types/modules.json' with { type: 'json' }
 import { parseSync, transform as swcTransform } from '@swc/core'
@@ -37,6 +34,9 @@ const GlobalImportAliases: Record<string, string> = {
 	'react-native': 'revenge.react.ReactNative',
 	'react/jsx-runtime': 'revenge.react.ReactJSXRuntime',
 	'react/jsx-dev-runtime': 'revenge.react.ReactJSXRuntime',
+	'zustand': 'revenge.externals.Zustand.Zustand',
+	'zustand/vanilla': 'revenge.externals.Zustand.ZustandVanilla',
+	'zustand/react': 'revenge.externals.Zustand.ZustandReact',
 	'@shopify/flash-list': 'revenge.externals.Shopify.FlashList',
 	'@react-native-clipboard/clipboard':
 		'revenge.externals.ReactNativeClipboard.Clipboard',
