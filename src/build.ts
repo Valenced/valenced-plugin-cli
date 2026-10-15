@@ -147,7 +147,7 @@ const hermesSwcPlugin = {
  * - Raw (.json): default export object
  * - Images (.png, .jpg, .jpeg, .webp, .svg): default export base64 data URI string
  */
-const fileParserPlugin = {
+export const fileParserPlugin = {
 	name: 'file-parser',
 	async load(id: string) {
 		const parsers: Record<string, string[]> = {
@@ -186,6 +186,8 @@ const fileParserPlugin = {
 
 		return {
 			code: `export default ${exportedContent};`,
+			// Rolldown infers the module type from the extension, so without this it parses the .json output as JSON.
+			moduleType: 'js' as const,
 			map: null,
 		}
 	},

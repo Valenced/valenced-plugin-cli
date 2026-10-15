@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'bun:test'
-import { inlineExternalImports } from '../src/build.ts'
+import { mkdtempSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { rolldown } from 'rolldown'
+import { fileParserPlugin, inlineExternalImports } from '../src/build.ts'
 
 /** Emits the rewritten module, or the input when nothing was rewritten. */
 function transform(code: string): string {
@@ -168,5 +172,22 @@ const { Stack } = revenge.discord.design.Design, other = compute()
 
 export default plugin({ start() { return [revenge.discord.design.Design.Stack, other] } })
 `)
+	})
+})
+
+describe('CLI Build File Parser', () => {
+	test('bundles a JSON import as a default export object', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'revenge-cli-json-'))
+		writeFileSync(join(dir, 'data.json'), '{\r\n\t"id": "a.b"\r\n}\r\n')
+		writeFileSync(
+			join(dir, 'index.js'),
+			"import data from './data.json' with { type: 'json' }\nexport const id = data.id\n",
+		)
+		const bundle = await rolldown({
+			input: join(dir, 'index.js'),
+			plugins: [fileParserPlugin],
+		})
+		const { output } = await bundle.generate({ format: 'esm' })
+		expect(output[0].code).toContain('"a.b"')
 	})
 })
