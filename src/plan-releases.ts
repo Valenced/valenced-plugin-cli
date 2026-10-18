@@ -1,7 +1,7 @@
 /**
  * Release planner
  *
- *     revenge-plugin plan-releases --pool <dir> [--plugins-dir plugins] [--dist build/dist] [--out releases.json]
+ *     revenge-plugin plan-releases --pool <dir> [--plugins-dir plugins]... [--dist build/dist] [--out releases.json]
  *
  * A plugin is released when the published pool holds `<id>@<version>.zip`. The pool is the only
  * ledger, so a half-finished publish leaves nothing behind and re-running the release is safe.
@@ -97,11 +97,21 @@ export function planReleases(
 	return plan
 }
 
-/** Reads `<pluginsDir>/<name>/manifest.json` for every plugin. */
-export function readPluginSources(pluginsDir = 'plugins'): PluginSource[] {
-	if (!existsSync(pluginsDir))
-		throw new Error(`No plugins directory at '${pluginsDir}'`)
+/** Reads `<pluginsDir>/<name>/manifest.json` for every plugin in every plugins directory. */
+export function readPluginSources(
+	pluginsDirs: string[] = ['plugins'],
+): PluginSource[] {
+	const sources: PluginSource[] = []
+	for (const pluginsDir of pluginsDirs) {
+		if (!existsSync(pluginsDir))
+			throw new Error(`No plugins directory at '${pluginsDir}'`)
 
+		sources.push(...readPluginDir(pluginsDir))
+	}
+	return sources
+}
+
+function readPluginDir(pluginsDir: string): PluginSource[] {
 	const sources: PluginSource[] = []
 	for (const name of readdirSync(pluginsDir)) {
 		const manifestPath = `${pluginsDir}/${name}/manifest.json`
@@ -149,7 +159,7 @@ export async function run(argv: string[]): Promise<void> {
 		args: argv,
 		options: {
 			pool: { type: 'string' },
-			'plugins-dir': { type: 'string', default: 'plugins' },
+			'plugins-dir': { type: 'string', multiple: true, default: ['plugins'] },
 			dist: { type: 'string', default: 'build/dist' },
 			out: { type: 'string', default: 'releases.json' },
 			help: { type: 'boolean', short: 'h', default: false },
@@ -157,7 +167,7 @@ export async function run(argv: string[]): Promise<void> {
 	})
 	if (values.help) {
 		console.log(
-			'Usage: revenge-plugin plan-releases --pool <dir> [--plugins-dir <dir>] [--dist <dir>] [--out <file>]',
+			'Usage: revenge-plugin plan-releases --pool <dir> [--plugins-dir <dir>]... [--dist <dir>] [--out <file>]',
 		)
 		return
 	}

@@ -12,7 +12,11 @@ import {
 	parseVersion,
 	poolFileName,
 } from '../src/generate-index.ts'
-import { planReleases, readPooledVersions } from '../src/plan-releases.ts'
+import {
+	planReleases,
+	readPluginSources,
+	readPooledVersions,
+} from '../src/plan-releases.ts'
 import type { PluginSource } from '../src/plan-releases.ts'
 
 const order = (a: string, b: string) =>
@@ -268,5 +272,32 @@ describe('Pool integrity', () => {
 				url: 'https://example.invalid/pool/com.example.demo@1.0.0.zip',
 			},
 		])
+	})
+})
+
+describe('Plugin sources', () => {
+	const writePlugin = (root: string, name: string, id: string) => {
+		mkdirSync(join(root, name), { recursive: true })
+		writeFileSync(
+			join(root, name, 'manifest.json'),
+			JSON.stringify({ id, version: '1.0.0' }),
+		)
+	}
+
+	test('reads every plugins directory', () => {
+		const plugins = join(scratch, 'sources', 'plugins')
+		const themes = join(scratch, 'sources', 'themes')
+		writePlugin(plugins, 'demo', 'com.example.demo')
+		writePlugin(themes, 'midnight', 'com.example.midnight')
+		expect(readPluginSources([plugins, themes]).map(s => s.id)).toEqual([
+			'com.example.demo',
+			'com.example.midnight',
+		])
+	})
+
+	test('reports a missing plugins directory', () => {
+		expect(() => readPluginSources([join(scratch, 'absent')])).toThrow(
+			'No plugins directory',
+		)
 	})
 })

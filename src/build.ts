@@ -694,25 +694,27 @@ export async function run(argv: string[]): Promise<void> {
 		allowPositionals: true,
 		options: {
 			dev: { type: 'boolean', short: 'd', default: false },
-			'plugins-dir': { type: 'string', default: 'plugins' },
+			'plugins-dir': { type: 'string', multiple: true, default: ['plugins'] },
 			help: { type: 'boolean', short: 'h', default: false },
 		},
 	})
 	if (values.help) {
-		console.log(`Usage: revenge-plugin build [names...] [--dev] [--plugins-dir <dir>]
+		console.log(`Usage: revenge-plugin build [names...] [--dev] [--plugins-dir <dir>]...
 
 Bundles each plugin's index.{ts,tsx,js,jsx} (in the plugin root or js/) into
 <plugin>/build/js/index.js. Positional names select specific plugins; otherwise
-every plugin is built.`)
+every plugin is built. Repeat --plugins-dir to build from several directories.`)
 		return
 	}
 
 	const dev = values.dev
-	const pluginsDir = values['plugins-dir']
-	const names = positionals.length ? positionals : readdirSync(pluginsDir)
+	const dirs = values['plugins-dir'].flatMap(pluginsDir =>
+		(positionals.length ? positionals : readdirSync(pluginsDir)).map(
+			name => ({ name, dir: `${pluginsDir}/${name}` }),
+		),
+	)
 
-	for (const name of names) {
-		const dir = `${pluginsDir}/${name}`
+	for (const { name, dir } of dirs) {
 		const manifestPath = `${dir}/manifest.json`
 		if (!existsSync(manifestPath)) continue
 

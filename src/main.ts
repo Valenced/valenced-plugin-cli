@@ -7,6 +7,7 @@ Commands:
   serve [options]                 Serve a local repository (index + ZIPs) for device testing
 
 Run against a plugin repo root (the directory containing plugins/).
+Pass --plugins-dir more than once to use several plugin directories.
 See each command's --help for its options.`
 
 const [command, ...argv] = process.argv.slice(2)
