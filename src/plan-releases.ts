@@ -1,7 +1,7 @@
 /**
  * Release planner
  *
- *     revenge-plugin plan-releases --pool <dir> [--plugins-dir plugins]... [--dist build/dist] [--out releases.json]
+ *     valenced-plugin plan-releases --pool <dir> [--plugins-dir plugins]... [--dist build/dist] [--out releases.json]
  *
  * A plugin is released when the published pool holds `<id>@<version>.zip`. The pool is the only
  * ledger, so a half-finished publish leaves nothing behind and re-running the release is safe.
@@ -167,7 +167,7 @@ export async function run(argv: string[]): Promise<void> {
 	})
 	if (values.help) {
 		console.log(
-			'Usage: revenge-plugin plan-releases --pool <dir> [--plugins-dir <dir>]... [--dist <dir>] [--out <file>]',
+			'Usage: valenced-plugin plan-releases --pool <dir> [--plugins-dir <dir>]... [--dist <dir>] [--out <file>]',
 		)
 		return
 	}

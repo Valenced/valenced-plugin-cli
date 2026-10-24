@@ -2,10 +2,10 @@
  * Repository index generator
  *
  *   Local mode: a directory of plugin ZIPs:
- *       revenge-plugin generate-index --dist build/dist --base-url http://192.168.1.2:8080 [--out index.json]
+ *       valenced-plugin generate-index --dist build/dist --base-url http://192.168.1.2:8080 [--out index.json]
  *
  *   Descriptor mode: a pre-built list of local ZIPs and their final URLs:
- *       revenge-plugin generate-index --releases releases.json [--out index.json]
+ *       valenced-plugin generate-index --releases releases.json [--out index.json]
  *
  *     Descriptor shape: [{ "file": "<local path to the ZIP>", "url": "<final absolute asset URL>" }]
  *
@@ -110,7 +110,7 @@ function readZipEntry(zip: Uint8Array, entryName: string): Uint8Array | null {
 const MANIFEST_FORMAT = 1
 const PLUGIN_ID_REGEX = /^[a-zA-Z0-9.-]+$/
 // Reserved dependencies every plugin must declare
-const RESERVED_DEPENDENCY_IDS = ['revenge.api', 'discord']
+const RESERVED_DEPENDENCY_IDS = ['valenced.api', 'discord']
 
 interface Manifest {
 	format: number
@@ -274,7 +274,7 @@ export async function run(argv: string[]): Promise<void> {
 	})
 	if (values.help) {
 		console.log(
-			'Usage: revenge-plugin generate-index (--dist <dir> --base-url <url> | --releases <descriptor.json>) [--out <file>]',
+			'Usage: valenced-plugin generate-index (--dist <dir> --base-url <url> | --releases <descriptor.json>) [--out <file>]',
 		)
 		return
 	}

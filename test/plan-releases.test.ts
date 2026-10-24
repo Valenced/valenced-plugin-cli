@@ -135,7 +135,7 @@ describe('Release planning', () => {
 // The pool is the ledger: an artifact exists, or the version is unpublished.
 // ---------------------------------------------------------------------------
 
-const scratch = mkdtempSync(join(tmpdir(), 'revenge-pool-'))
+const scratch = mkdtempSync(join(tmpdir(), 'valenced-pool-'))
 afterAll(() => rmSync(scratch, { recursive: true, force: true }))
 
 let poolCount = 0
@@ -156,7 +156,7 @@ function writeArtifact(
 		id,
 		name: 'Demo',
 		version,
-		dependencies: { 'revenge.api': { version: '>=1.0.0' }, discord: {} },
+		dependencies: { 'valenced.api': { version: '>=1.0.0' }, discord: {} },
 	}
 	const path = join(dir, fileName)
 	writeFileSync(

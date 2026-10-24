@@ -1,4 +1,4 @@
-const USAGE = `Usage: revenge-plugin <command> [options]
+const USAGE = `Usage: valenced-plugin <command> [options]
 
 Commands:
   build [names...] [--dev]        Bundle every (or the named) plugin's JS

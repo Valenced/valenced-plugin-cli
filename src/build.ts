@@ -2,13 +2,13 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { parseArgs } from 'node:util'
-import hiddenImportMap from '@revenge-mod/types/modules.hidden.importmap.json' with { type: 'json'
+import hiddenImportMap from '@valenced/types/modules.hidden.importmap.json' with { type: 'json'
 }
-import hiddenModules from '@revenge-mod/types/modules.hidden.json' with { type: 'json'
+import hiddenModules from '@valenced/types/modules.hidden.json' with { type: 'json'
 }
-import publicImportMap from '@revenge-mod/types/modules.importmap.json' with { type: 'json'
+import publicImportMap from '@valenced/types/modules.importmap.json' with { type: 'json'
 }
-import modules from '@revenge-mod/types/modules.json' with { type: 'json' }
+import modules from '@valenced/types/modules.json' with { type: 'json' }
 import { parseSync, transform as swcTransform } from '@swc/core'
 import { rolldown } from 'rolldown'
 import type { Module } from '@swc/core'
@@ -30,20 +30,20 @@ interface ExternalTarget {
 type ImportMapEntry = string | { global: string; interop?: 'default' }
 
 const GlobalImportAliases: Record<string, string> = {
-	react: 'revenge.react.React',
-	'react-native': 'revenge.react.ReactNative',
-	'react/jsx-runtime': 'revenge.react.ReactJSXRuntime',
-	'react/jsx-dev-runtime': 'revenge.react.ReactJSXRuntime',
-	'zustand': 'revenge.externals.Zustand.Zustand',
-	'zustand/vanilla': 'revenge.externals.Zustand.ZustandVanilla',
-	'zustand/react': 'revenge.externals.Zustand.ZustandReact',
-	'@shopify/flash-list': 'revenge.externals.Shopify.FlashList',
+	react: 'valenced.react.React',
+	'react-native': 'valenced.react.ReactNative',
+	'react/jsx-runtime': 'valenced.react.ReactJSXRuntime',
+	'react/jsx-dev-runtime': 'valenced.react.ReactJSXRuntime',
+	'zustand': 'valenced.externals.Zustand.Zustand',
+	'zustand/vanilla': 'valenced.externals.Zustand.ZustandVanilla',
+	'zustand/react': 'valenced.externals.Zustand.ZustandReact',
+	'@shopify/flash-list': 'valenced.externals.Shopify.FlashList',
 	'@react-native-clipboard/clipboard':
-		'revenge.externals.ReactNativeClipboard.Clipboard',
+		'valenced.externals.ReactNativeClipboard.Clipboard',
 	'@react-navigation/stack':
-		'revenge.externals.ReactNavigation.ReactNavigationStack',
+		'valenced.externals.ReactNavigation.ReactNavigationStack',
 	'@react-navigation/native':
-		'revenge.externals.ReactNavigation.ReactNavigationNative',
+		'valenced.externals.ReactNavigation.ReactNavigationNative',
 }
 
 const ImportMap = {
@@ -53,7 +53,7 @@ const ImportMap = {
 
 const TypeOnlyModules = new Set(
 	[...modules, ...hiddenModules]
-		.map(mod => `@revenge-mod/${mod}`)
+		.map(mod => `@valenced/${mod}`)
 		.filter(id => !(id in ImportMap)),
 )
 
@@ -78,12 +78,12 @@ function resolveExternal(id: string): ExternalTarget | null {
 
 	if (TypeOnlyModules.has(id)) return null
 	throw new Error(
-		`Import cannot be resolved: ${id}\n\nCheck if the module is installed or @revenge-mod/types is up to date`,
+		`Import cannot be resolved: ${id}\n\nCheck if the module is installed or @valenced/types is up to date`,
 	)
 }
 
 /**
- * Rolldown plugin that uses SWC to transpile code using Revenge Next's exact Hermes SWC settings:
+ * Rolldown plugin that uses SWC to transpile code using Valenced's exact Hermes SWC settings:
  * https://github.com/facebook/hermes/blob/main/doc/Features.md
  */
 const hermesSwcPlugin = {
@@ -557,7 +557,7 @@ function applyEditsToBuffer(code: string, edits: TextEdit[]): string {
 }
 
 /**
- * Rewrites one module: external imports are erased and every use of an imported symbol becomes a property access on `revenge`.
+ * Rewrites one module: external imports are erased and every use of an imported symbol becomes a property access on `valenced`.
  * Returns `null` when the module imports nothing external.
  */
 export function inlineExternalImports(code: string, id: string): string | null {
@@ -589,8 +589,8 @@ export function inlineExternalImports(code: string, id: string): string | null {
 }
 
 /**
- * Rolldown plugin that uses SWC AST parsing to inline external module imports (`@revenge-mod/*`, `react`, `react-native`)
- * directly into global property accesses on `revenge` at usage sites inside functions/components.
+ * Rolldown plugin that uses SWC AST parsing to inline external module imports (`@valenced/*`, `react`, `react-native`)
+ * directly into global property accesses on `valenced` at usage sites inside functions/components.
  *
  * This avoids any top-level variable binding or preInit property evaluation issues.
  */
@@ -699,7 +699,7 @@ export async function run(argv: string[]): Promise<void> {
 		},
 	})
 	if (values.help) {
-		console.log(`Usage: revenge-plugin build [names...] [--dev] [--plugins-dir <dir>]...
+		console.log(`Usage: valenced-plugin build [names...] [--dev] [--plugins-dir <dir>]...
 
 Bundles each plugin's index.{ts,tsx,js,jsx} (in the plugin root or js/) into
 <plugin>/build/js/index.js. Positional names select specific plugins; otherwise
@@ -756,7 +756,7 @@ every plugin is built. Repeat --plugins-dir to build from several directories.`)
 				transform: {
 					target: 'es2020',
 					jsx: {
-						// Compiles to `react/jsx-runtime` imports, which remaps to `revenge.react.ReactJSXRuntime`.
+						// Compiles to `react/jsx-runtime` imports, which remaps to `valenced.react.ReactJSXRuntime`.
 						runtime: 'automatic',
 						// We don't expose jsxDev
 						development: false,

@@ -1,11 +1,11 @@
 {
-	"name": "@revenge-mod/plugin-cli",
+	"name": "@valenced/plugin-cli",
 	"version": "0.1.0",
-	"description": "Build, index and serve Revenge plugin repositories.",
+	"description": "Build, index and serve Valenced plugin repositories.",
 	"license": "GPL-3.0-or-later",
 	"type": "module",
 	"bin": {
-		"revenge-plugin": "bin/revenge-plugin.js"
+		"valenced-plugin": "bin/valenced-plugin.js"
 	},
 	"files": [
 		"bin",
@@ -33,6 +33,6 @@
 		"@types/node": "^22.20.1"
 	},
 	"peerDependencies": {
-		"@revenge-mod/types": "git+https://github.com/revenge-mod/revenge-types.git"
+		"@valenced/types": "git+https://github.com/Valenced/valenced-types.git"
 	}
 }

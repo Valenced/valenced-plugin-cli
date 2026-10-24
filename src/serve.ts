@@ -4,8 +4,8 @@
  * Regenerates the index from your built plugin ZIPs and serves it together with the ZIPs,
  * so you can add the printed URL as a repository and go through the browse/install/update flow against local builds.
  *
- *   revenge-plugin serve                                  # LAN mode
- *   revenge-plugin serve --base-url http://127.0.0.1:8080 # local mode
+ *   valenced-plugin serve                                  # LAN mode
+ *   valenced-plugin serve --base-url http://127.0.0.1:8080 # local mode
  *
  * Flags:
  *   --dist <dir>       directory of plugin ZIPs (default build/dist)
@@ -43,7 +43,7 @@ export async function run(argv: string[]): Promise<void> {
 	})
 	if (values.help) {
 		console.log(
-			'Usage: revenge-plugin serve [--dist <dir>] [--port <port>] [--host <ip>] [--base-url <url>]',
+			'Usage: valenced-plugin serve [--dist <dir>] [--port <port>] [--host <ip>] [--base-url <url>]',
 		)
 		return
 	}
@@ -65,7 +65,7 @@ export async function run(argv: string[]): Promise<void> {
 
 	if (!scanZips().length) {
 		console.error(
-			`No plugin ZIPs in ${dist}. Run the build first:\n  ./gradlew packageAllPlugins   (or \`revenge-plugin build\` for JS bundles, see README)`,
+			`No plugin ZIPs in ${dist}. Run the build first:\n  ./gradlew packageAllPlugins   (or \`valenced-plugin build\` for JS bundles, see README)`,
 		)
 		process.exit(1)
 	}
