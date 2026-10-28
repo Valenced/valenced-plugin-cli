@@ -23,6 +23,8 @@ import { parseArgs } from 'node:util'
 import { generateIndex, loadRepoConfig } from './generate-index.ts'
 import type { Artifact } from './generate-index.ts'
 
+const INDEX_PATH = '/index.json'
+
 function detectLanIp(): string | null {
 	for (const infos of Object.values(networkInterfaces()))
 		for (const info of infos ?? [])
@@ -108,7 +110,7 @@ export async function run(argv: string[]): Promise<void> {
 	const server = createServer((req, res) => {
 		const { pathname } = new URL(req.url ?? '/', baseUrl)
 
-		if (pathname === '/index.json') {
+		if (pathname === INDEX_PATH) {
 			try {
 				rebuildIfChanged()
 			} catch (e) {
@@ -142,7 +144,7 @@ export async function run(argv: string[]): Promise<void> {
 
 	server.listen(port, '0.0.0.0', () => {
 		console.log(`Serving local plugin repository on port ${port}`)
-		console.log(`  Repository URL: ${baseUrl}`)
+		console.log(`  Repository URL: ${baseUrl}${INDEX_PATH}`)
 		if (baseUrl.includes('127.0.0.1') || baseUrl.includes('localhost'))
 			console.log(`  Device setup:   adb reverse tcp:${port} tcp:${port}`)
 	})
